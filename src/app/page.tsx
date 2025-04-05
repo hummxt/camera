@@ -1,103 +1,131 @@
-import Image from "next/image";
+'use client';
+
+import { useEffect, useRef, useState } from 'react';
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [filter, setFilter] = useState<string>('none');
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+  useEffect(() => {
+    const getCamera = async () => {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        if (videoRef.current) {
+          videoRef.current.srcObject = stream;
+        }
+      } catch (err) {
+        console.error('Error accessing camera:', err);
+      }
+    };
+
+    getCamera();
+  }, []);
+
+  const filters = [
+    { name: 'None', value: 'none' },
+    { name: 'Grayscale', value: 'grayscale(100%)' },
+    { name: 'Sepia', value: 'sepia(100%)' },
+    { name: 'Blur', value: 'blur(5px)' },
+    { name: 'Invert', value: 'invert(100%)' },
+    { name: 'Brightness+', value: 'brightness(1.5)' },
+    { name: 'Brightness-', value: 'brightness(0.5)' },
+    { name: 'Contrast+', value: 'contrast(200%)' },
+    { name: 'Contrast-', value: 'contrast(50%)' },
+    { name: 'Saturate+', value: 'saturate(200%)' },
+    { name: 'Saturate-', value: 'saturate(50%)' },
+    { name: 'Hue Rotate 90°', value: 'hue-rotate(90deg)' },
+    { name: 'Hue Rotate 180°', value: 'hue-rotate(180deg)' },
+    { name: 'Opacity 50%', value: 'opacity(0.5)' },
+    { name: 'Glow Mode', value: 'brightness(1.5) contrast(150%) saturate(200%)' },
+    { name: 'Retro', value: 'sepia(0.6) contrast(1.2) brightness(0.9)' },
+    { name: 'Dreamy', value: 'blur(3px) brightness(1.3) saturate(150%)' },
+    { name: 'Cyberpunk', value: 'hue-rotate(290deg) saturate(300%) contrast(200%)' },
+    { name: 'Flip Horizontal', value: 'mirror' },
+    { name: 'Flip Vertical', value: 'flip-vertical' },
+    { name: 'X-Ray', value: 'invert(100%) hue-rotate(180deg)' },
+    { name: 'Pixelate', value: 'pixelate' },
+    { name: 'RGB Split', value: 'rgb-split' },
+    { name: 'Dreamy Glow', value: 'blur(4px) brightness(1.5) saturate(180%)' },
+    { name: 'VHS Glitch', value: 'glitch' },
+    { name: 'Neon Glow', value: 'glow' },
+    { name: 'Ghost', value: 'ghost' },
+    { name: 'Shaky Cam', value: 'shake' },
+    { name: 'Old TV', value: 'tv' },
+    { name: 'Color Flash', value: 'flash' },
+    { name: 'Trippy', value: 'trippy' },
+    { name: 'Thermal Vision', value: 'thermal' },
+    { name: 'Outline Edge', value: 'outline' },
+  ];
+
+  return (
+    <main className="flex flex-col items-center justify-center min-h-screen bg-gray-900 text-white p-4 gap-10">
+      <h1 className="text-3xl font-bold mb-6">Camera Filters</h1>
+      <video
+        ref={videoRef}
+        autoPlay
+        playsInline
+        className={`rounded-lg shadow-lg w-full max-w-md mb-6 transition-all duration-300 ${filter === 'mirror'
+          ? 'scale-x-[-1]'
+          : filter === 'flip-vertical'
+            ? 'scale-y-[-1]'
+            : filter === 'pixelate'
+              ? 'pixelate'
+              : filter === 'rgb-split'
+                ? 'rgb-split'
+                : filter === 'glitch'
+                  ? 'glitch'
+                  : filter === 'glow'
+                    ? 'glow'
+                    : filter === 'shake'
+                      ? 'shake'
+                      : filter === 'ghost'
+                        ? 'ghost'
+                        : filter === 'tv'
+                          ? 'tv'
+                          : filter === 'flash'
+                            ? 'flash'
+                            : filter === 'trippy'
+                              ? 'trippy'
+                              : filter === 'thermal'
+                                ? 'thermal'
+                                : filter === 'outline'
+                                  ? 'outline'
+                                  : ''
+          }`}
+
+        style={{
+          filter: ![
+            'mirror',
+            'flip-vertical',
+            'pixelate',
+            'rgb-split',
+            'glitch',
+            'glow',
+            'shake',
+            'ghost',
+            'tv',
+            'flash',
+            'trippy',
+            'thermal',
+            'outline',
+          ].includes(filter)
+            ? filter
+            : undefined,
+        }}
+
+      />
+      <div className="grid grid-cols-4 sm:grid-cols-5 gap-4">
+        {filters.map(({ name, value }) => (
+          <button
+            key={name}
+            onClick={() => setFilter(value)}
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${filter === value ? 'bg-blue-500' : 'bg-gray-700 hover:bg-gray-600'
+              }`}
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+            {name}
+          </button>
+        ))}
+      </div>
+    </main>
   );
-}
+} 
